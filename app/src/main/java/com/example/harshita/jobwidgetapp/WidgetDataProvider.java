@@ -4,14 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -52,9 +48,8 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     public RemoteViews getViewAt(int i) {
         RemoteViews view = new RemoteViews(mContext.getPackageName(),
                 android.R.layout.simple_list_item_1);
-        Intent fillInIntent = new Intent();
-        fillInIntent.putExtra("row", i);
-        view.setOnClickFillInIntent(android.R.layout.simple_list_item_1, fillInIntent);
+        Intent fillInIntent = new Intent().putExtra("row", i);
+        view.setOnClickFillInIntent(android.R.id.text1, fillInIntent);
         Job job = jobList.get(i);
         view.setTextViewText(android.R.id.text1, job.positionTitle);
         return view;
@@ -81,7 +76,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     }
 
 
-    void init() {
+    private void init() {
         //Some url endpoint that you may have
         String myUrl = "https://jobs.search.gov/jobs/search.json?query=nursing+jobs";
         //String to place our result in

@@ -21,16 +21,16 @@ public class CollectionWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.collection_widget);
+
 //        views.setTextViewText(R.id.appwidget_text, widgetText);
 
-        Intent startActivityIntent = new Intent(context, MainActivity.class);
-        startActivityIntent.setAction(CollectionWidget.MODIFIER);
+        Intent startActivityIntent = new Intent(context, WidgetDataProvider.class).setAction(CollectionWidget.MODIFIER);
+
         startActivityIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
-        PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent startActivityPendingIntent = PendingIntent.getBroadcast(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.collection_widget);
         views.setPendingIntentTemplate(R.id.widget_list, startActivityPendingIntent);
-
         setRemoteAdapter(context, views);
 
         // Instruct the widget manager to update the widget
@@ -82,12 +82,12 @@ public class CollectionWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         AppWidgetManager mgr = AppWidgetManager.getInstance(context);
-        if (!intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+        if (intent.getAction().equals(MODIFIER)) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
             int viewIndex = intent.getIntExtra("row", 0);
             Intent i = new Intent(context, MainActivity.class);
-            i.putExtra("id",String.valueOf(viewIndex));
+            i.putExtra("id", String.valueOf(viewIndex));
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
             Toast.makeText(context, "Vista pulsada es: " + viewIndex, Toast.LENGTH_SHORT).show();
